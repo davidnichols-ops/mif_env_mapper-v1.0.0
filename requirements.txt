@@ -1,0 +1,6 @@
+# MIF Environment Mapper - Dependencies
+# This project uses Python 3.8+ standard library ONLY
+# No external pip packages required
+#
+# For development/testing:
+# pytest>=7.0 (optional, for running test suite)
