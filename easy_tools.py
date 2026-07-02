@@ -74,7 +74,7 @@ def find_node_packages():
     """Find Node.js packages using npm."""
     npm_list = run_command(["npm", "list", "-g", "--depth=0", "--parseable"])
     # Just get the package names
-    return [os.path.basename(p) for p in npm_list if p and not p.startswith("/")]
+    return [os.path.basename(p) for p in npm_list if p]
 
 def find_all_packages():
     """Find ALL packages on the computer."""
@@ -118,21 +118,21 @@ def hide_secrets_in_string(text):
         if len(parts) > 1:
             # Get the password value (everything until next space or end)
             password_part = parts[1].split()[0] if parts[1].split() else parts[1]
-            text = text.replace(password_part, "[HIDDEN]")
+            text = text.replace("password=" + password_part, "password=[HIDDEN]", 1)
     
     # Hide tokens
     if "token=" in text.lower():
         parts = text.split("token=", 1)
         if len(parts) > 1:
             token_part = parts[1].split()[0] if parts[1].split() else parts[1]
-            text = text.replace(token_part, "[HIDDEN]")
+            text = text.replace("token=" + token_part, "token=[HIDDEN]", 1)
     
     # Hide API keys
     if "api_key=" in text.lower():
         parts = text.split("api_key=", 1)
         if len(parts) > 1:
             key_part = parts[1].split()[0] if parts[1].split() else parts[1]
-            text = text.replace(key_part, "[HIDDEN]")
+            text = text.replace("api_key=" + key_part, "api_key=[HIDDEN]", 1)
     
     return text
 
@@ -184,8 +184,15 @@ def save_report_to_file(report, filename):
 
 def load_report_from_file(filename):
     """Load a report from a JSON file."""
-    with open(filename, 'r') as f:
-        return json.load(f)
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"❓ File not found: {filename}")
+        return None
+    except json.JSONDecodeError:
+        print(f"😢 Invalid JSON in file: {filename}")
+        return None
 
 # 🎨 Display Functions
 

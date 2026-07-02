@@ -17,7 +17,7 @@ def get_preference():
             with open(PREFERENCE_FILE, 'r') as f:
                 data = json.load(f)
                 return data.get('mode')
-        except:
+        except (json.JSONDecodeError, IOError, OSError):
             return None
     return None
 
@@ -95,19 +95,18 @@ def run_main_mode():
         
         data = orchestrator.run_silent()
         
-        output_target = None
         if args.output:
-            output_target = open(args.output, "w")
-        
-        try:
+            with open(args.output, "w") as output_target:
+                if args.summary:
+                    reporter.write_summary(data, output_target)
+                else:
+                    reporter.write_json(data, output_target)
+            print(f"[MIF] Output written to: {args.output}")
+        else:
             if args.summary:
-                reporter.write_summary(data, output_target)
+                reporter.write_summary(data, None)
             else:
-                reporter.write_json(data, output_target)
-        finally:
-            if output_target:
-                output_target.close()
-                print(f"[MIF] Output written to: {args.output}")
+                reporter.write_json(data, None)
         
         return 0
         

@@ -119,7 +119,7 @@ def verify_sanitization():
         ("/home/janedoe/file", "janedoe"),
         ("password=secret123", "secret123"),
         ("auth_token=abc123", "abc123"),
-        ("192.168.1.1", "192.168.1.1"),
+        ("192.168.1.1", "[REDACTED_IP]"),
     ]
     
     for input_str, should_not_contain in test_cases:

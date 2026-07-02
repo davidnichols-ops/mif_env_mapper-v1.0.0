@@ -188,9 +188,17 @@ class Orchestrator:
         
         Returns:
             Complete sanitized, validated snapshot dictionary
+            
+        Raises:
+            OrchestrationError: On pipeline failures
         """
-        os_type = self._detect_platform()
-        raw_payload = self._build_snapshot(os_type)
-        clean_payload = self._sanitize_snapshot(raw_payload)
-        self._validate_snapshot(clean_payload)
-        return clean_payload
+        try:
+            os_type = self._detect_platform()
+            raw_payload = self._build_snapshot(os_type)
+            clean_payload = self._sanitize_snapshot(raw_payload)
+            self._validate_snapshot(clean_payload)
+            return clean_payload
+        except OrchestrationError:
+            raise
+        except Exception as e:
+            raise OrchestrationError(f"Unexpected pipeline error: {str(e)}") from e

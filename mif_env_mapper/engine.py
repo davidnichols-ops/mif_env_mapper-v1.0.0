@@ -137,7 +137,7 @@ class DiscoveryEngine:
         
         # Node.js / npm
         npm_output = self.execute_command(["npm", "list", "-g", "--depth=0", "--parseable"])
-        runtime_packages.extend([os.path.basename(p) for p in npm_output if p and not p.startswith("/")])
+        runtime_packages.extend([os.path.basename(p) for p in npm_output if p])
         
         # Python / pip
         pip_output = self.execute_command([sys.executable, "-m", "pip", "freeze"])

@@ -84,6 +84,7 @@ class SchemaValidator:
         errors: List[str] = []
         
         if not isinstance(schema, dict):
+            errors.append(f"{path}: Invalid schema format (expected object)")
             return errors
         
         # Check type

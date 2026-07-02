@@ -22,7 +22,8 @@ SYSTEM_SNAPSHOT_SCHEMA = {
                 "timestamp": {"type": "string"},
                 "collection_duration_ms": {"type": "number"}
             },
-            "required": ["os_platform", "kernel_version", "timestamp"]
+            "required": ["os_platform", "kernel_version", "timestamp"],
+            "additionalProperties": False
         },
         "packages": {
             "type": "object",
@@ -36,10 +37,12 @@ SYSTEM_SNAPSHOT_SCHEMA = {
                     "items": {"type": "string"}
                 }
             },
-            "required": ["system_level", "language_runtimes"]
+            "required": ["system_level", "language_runtimes"],
+            "additionalProperties": False
         }
     },
-    "required": ["system_metadata", "packages"]
+    "required": ["system_metadata", "packages"],
+    "additionalProperties": False
 }
 
 # =====================================================================
@@ -47,7 +50,7 @@ SYSTEM_SNAPSHOT_SCHEMA = {
 # =====================================================================
 SENSITIVE_PATTERNS = [
     # Credentials and secrets
-    (re.compile(r"(?i)(passwd|password|secret|token|api_key|apikey|auth_token|access_token|private_key)\s*[:=]\s*\S+", re.IGNORECASE), r"\1=[REDACTED_SECRET]"),
+    (re.compile(r"(?i)(passwd|password|secret|token|api_key|apikey|auth_token|access_token|private_key)\s*[:=]\s*\S+"), r"\1=[REDACTED_SECRET]"),
     # User home directories - macOS
     (re.compile(r"/Users/[a-zA-Z0-9_\-\.]+"), "/Users/[REDACTED_USER]"),
     # User home directories - Linux
@@ -55,9 +58,9 @@ SENSITIVE_PATTERNS = [
     # SSH key paths
     (re.compile(r"/\.(ssh|gnupg)/[^\s\"']+"), "/.[REDACTED_KEY_PATH]/[REDACTED]"),
     # IP addresses (IPv4)
-    (re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"), "[REDACTED_IP]"),
+    (re.compile(r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"), "[REDACTED_IP]"),
     # Email addresses
-    (re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"), "[REDACTED_EMAIL]"),
+    (re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"), "[REDACTED_EMAIL]"),
     # UUIDs
     (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "[REDACTED_UUID]"),
     # AWS Keys

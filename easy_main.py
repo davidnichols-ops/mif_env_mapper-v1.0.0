@@ -6,6 +6,7 @@ Made for kids to use! Just follow the questions.
 
 import os
 import sys
+import re
 import platform
 import subprocess
 import json
@@ -27,7 +28,7 @@ def run_command(cmd):
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         return result.stdout.strip().split('\n') if result.stdout else []
-    except:
+    except (subprocess.SubprocessError, OSError):
         return []
 
 def hide_secrets(text):
@@ -41,11 +42,18 @@ def hide_secrets(text):
     
     # Hide passwords
     if "password=" in text.lower():
-        text = text.split("password=")[0] + "password=[HIDDEN]"
+        parts = text.split("password=", 1)
+        if len(parts) > 1:
+            # Get the password value (everything until next whitespace or end)
+            value_part = parts[1].split()[0] if parts[1].split() else parts[1]
+            text = parts[0] + "password=[HIDDEN]" + parts[1][len(value_part):]
     
     # Hide tokens
     if "token=" in text.lower():
-        text = text.split("token=")[0] + "token=[HIDDEN]"
+        parts = text.split("token=", 1)
+        if len(parts) > 1:
+            value_part = parts[1].split()[0] if parts[1].split() else parts[1]
+            text = parts[0] + "token=[HIDDEN]" + parts[1][len(value_part):]
     
     return text
 
@@ -146,6 +154,11 @@ def main():
         filename = input("\nWhat should we name the file? (default: my_report.json): ")
         if not filename:
             filename = "my_report.json"
+        else:
+            filename = os.path.basename(filename.strip())
+        if not re.match(r'^[a-zA-Z0-9_.\-]+\.json$', filename):
+            print("Invalid filename!")
+            return
         if not filename.endswith('.json'):
             filename += '.json'
         save_report(report, filename)
