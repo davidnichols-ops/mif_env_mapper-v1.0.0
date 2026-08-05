@@ -19,6 +19,7 @@ SYSTEM_SNAPSHOT_SCHEMA = {
                 "os_platform": {"type": "string"},
                 "kernel_version": {"type": "string"},
                 "hostname": {"type": "string"},
+                "architecture": {"type": "string"},
                 "timestamp": {"type": "string"},
                 "collection_duration_ms": {"type": "number"}
             },

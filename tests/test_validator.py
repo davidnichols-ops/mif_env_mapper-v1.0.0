@@ -135,5 +135,24 @@ class TestSchemaValidator(unittest.TestCase):
         self.assertEqual(len(errors), 0)
 
 
+    def test_snapshot_with_architecture_passes(self):
+        """Architecture is produced by DiscoveryEngine and must be accepted."""
+        valid_snapshot = {
+            "system_metadata": {
+                "os_platform": "linux",
+                "kernel_version": "5.15.0",
+                "hostname": "testhost",
+                "architecture": "x86_64",
+                "timestamp": "2026-06-07T16:20:00Z"
+            },
+            "packages": {
+                "system_level": [],
+                "language_runtimes": []
+            }
+        }
+        errors = self.validator.validate_with_errors(valid_snapshot, SYSTEM_SNAPSHOT_SCHEMA)
+        self.assertEqual(len(errors), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
